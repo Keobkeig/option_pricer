@@ -17,8 +17,6 @@ def black_scholes(S, K, T, r, sigma, dividend_yield=0.0, option_type='call'):
     d1 = (np.log(S / K) + (r - dividend_yield + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
 
-    
-
     if option_type == 'call':
         price = (S * np.exp(-dividend_yield * T) * norm.cdf(d1) 
                  - K * np.exp(-r * T) * norm.cdf(d2))
@@ -72,9 +70,8 @@ chart_data = {
     "Stock Price": stocks,
     "Call Option Price": [p[0] for p in call_prices],
     "Put Option Price": [p[0] for p in put_prices],
-    # "Delta": [p[1] for p in call_prices],
-    # "Gamma": [p[2] for p in call_prices],
 }
+
 st.line_chart(
     chart_data,
     x="Stock Price",
@@ -86,18 +83,32 @@ st.line_chart(
 st.header("Delta and Gamma Sensitivity Analysis")
 st.write("Delta and Gamma values for Call Options")
 
-import pandas as pd
-# Create DataFrame for Heatmap
-heatmap_data = pd.DataFrame({
+# import pandas as pd
+# # Create DataFrame for Heatmap
+# heatmap_data = pd.DataFrame({
+#     "Stock Price": stocks,
+#     "Delta": [p[1] for p in call_prices],
+#     "Gamma": [p[2] for p in call_prices],
+# }).set_index("Stock Price")
+
+greeks_chart_data = {
     "Stock Price": stocks,
     "Delta": [p[1] for p in call_prices],
     "Gamma": [p[2] for p in call_prices],
-}).set_index("Stock Price")
+}
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-fig , ax = plt.subplots()
-sns.heatmap(heatmap_data, fmt=".2f", ax=ax)
-st.write(fig)
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+# fig , ax = plt.subplots()
+# sns.heatmap(heatmap_data, fmt=".2f", ax=ax)
+# st.write(fig)
+
+# create a line_chart for the delta and gamma values
+st.line_chart(
+    greeks_chart_data,
+    x="Stock Price",
+    y=["Delta", "Gamma"],
+    color=["#FF0000", "#0000FF"]
+)
 
 st.write("Note: This calculator uses the Black-Scholes model for European-style Options.")
