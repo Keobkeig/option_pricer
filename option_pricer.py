@@ -112,8 +112,8 @@ st.header("Option PnL Analysis")
 
 
 # Update price and time ranges based on slider values
-price_range = np.linspace((1-price_range_pct/100)*S, (1+price_range_pct/100)*S, 50)
-time_range = np.linspace(min_time, T, 50)
+price_range = np.linspace((1-price_range_pct/100)*S, (1+price_range_pct/100)*S, 10)
+time_range = np.linspace(min_time, T, 8)
 
 price_mesh, time_mesh = np.meshgrid(price_range, time_range)
 pnl_matrix_call = np.zeros_like(price_mesh)
@@ -143,7 +143,11 @@ fig.add_trace(
         z=pnl_matrix_call,
         colorscale=[[0, 'red'], [0.5, 'white'], [1, 'green']],
         colorbar=dict(title='PnL ($)'),
-        showscale=False
+        showscale=False,
+        text=np.round(pnl_matrix_call, 2),
+        texttemplate='%{text}',
+        textfont={"size": 10},
+        hovertemplate="Price: $%{x:.2f}<br>Time to Expire: %{y:.2f} Years<br>PnL: $%{z:.2f}<extra></extra>"
     ),
     row=1, col=1
 )
@@ -154,6 +158,10 @@ fig.add_trace(
         y=time_range,
         z=pnl_matrix_put,
         colorscale=[[0, 'red'], [0.5, 'white'], [1, 'green']],
+        text=np.round(pnl_matrix_put, 2),
+        texttemplate='%{text}',
+        textfont={"size": 10},
+        hovertemplate="Price: $%{x:.2f}<br>Time to Expire: %{y:.2f} Years<br>PnL: $%{z:.2f}<extra></extra>"
     ),
     row=1, col=2
 )
