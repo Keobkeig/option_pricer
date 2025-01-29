@@ -46,7 +46,7 @@ price_range_pct = st.sidebar.slider(
     "Price Range (%)",
     min_value=10,
     max_value=100,
-    value=30,
+    value=10,
     help="Percentage above and below current price"
 )
 min_time = st.sidebar.slider(
@@ -126,10 +126,10 @@ initial_put_price = put_price[0]
 for i in range(len(time_range)):
     for j in range(len(price_range)):
         future_call_price = black_scholes(price_range[j], K, time_range[i], r, sigma, dividend_yield, 'call')[0]
-        pnl_matrix_call[i, j] = future_call_price - initial_call_price
+        pnl_matrix_call[i, j] = ((future_call_price - initial_call_price) / initial_call_price) * 100
         
         future_put_price = black_scholes(price_range[j], K, time_range[i], r, sigma, dividend_yield, 'put')[0]
-        pnl_matrix_put[i, j] = future_put_price - initial_put_price
+        pnl_matrix_put[i, j] = ((future_put_price - initial_put_price) / initial_put_price) * 100
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -142,12 +142,12 @@ fig.add_trace(
         y=time_range,
         z=pnl_matrix_call,
         colorscale=[[0, 'red'], [0.5, 'white'], [1, 'green']],
-        colorbar=dict(title='PnL ($)'),
+        colorbar=dict(title='PnL (%)'),
         showscale=False,
-        text=np.round(pnl_matrix_call, 2),
-        texttemplate='%{text}',
+        text=np.round(pnl_matrix_call, 1),
+        texttemplate='%{text}%',
         textfont={"size": 10},
-        hovertemplate="Price: $%{x:.2f}<br>Time to Expire: %{y:.2f} Years<br>PnL: $%{z:.2f}<extra></extra>"
+        hovertemplate="Price: $%{x:.2f}<br>Time to Expire: %{y:.2f} Years<br>PnL: %{z:.1f}%<extra></extra>"
     ),
     row=1, col=1
 )
@@ -158,10 +158,10 @@ fig.add_trace(
         y=time_range,
         z=pnl_matrix_put,
         colorscale=[[0, 'red'], [0.5, 'white'], [1, 'green']],
-        text=np.round(pnl_matrix_put, 2),
-        texttemplate='%{text}',
+        text=np.round(pnl_matrix_put, 1),
+        texttemplate='%{text}%',
         textfont={"size": 10},
-        hovertemplate="Price: $%{x:.2f}<br>Time to Expire: %{y:.2f} Years<br>PnL: $%{z:.2f}<extra></extra>"
+        hovertemplate="Price: $%{x:.2f}<br>Time to Expire: %{y:.2f} Years<br>PnL: %{z:.1f}%<extra></extra>"
     ),
     row=1, col=2
 )
